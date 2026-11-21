@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>CivicResolve</title>
+<link href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@400;500;700;800&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f5f6f1;--card:#fff;--ink:#14232e;--mut:#5b6b76;--line:#d9ddd5;--pri:#0f4c5c;--priInk:#fff;--acc:#e09f3e;--ok:#2f7d4f;--warn:#b7791f;--bad:#b83232;--crit:#7a1230;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#10181e;--card:#18232b;--ink:#e8edf0;--mut:#93a4af;--line:#2a3a45;--pri:#5fb3c4;--priInk:#08202a;--acc:#f0b45a;--ok:#5cc08a;--warn:#e6b450;--bad:#f07878;--crit:#ff8aa6}}
+:root[data-theme="dark"]{--bg:#10181e;--card:#18232b;--ink:#e8edf0;--mut:#93a4af;--line:#2a3a45;--pri:#5fb3c4;--priInk:#08202a;--acc:#f0b45a;--ok:#5cc08a;--warn:#e6b450;--bad:#f07878;--crit:#ff8aa6}
+*{box-sizing:border-box}html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--ink);font:400 16px/1.55 "Public Sans",system-ui,-apple-system,Segoe UI,sans-serif}
+header{background:var(--pri);color:var(--priInk);position:sticky;top:env(safe-area-inset-top,0px);z-index:5}
+.bar{max-width:1080px;margin:auto;padding:10px 16px;display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+.logo{font-weight:800;font-size:20px;letter-spacing:-.3px;margin-right:auto}
+nav{display:flex;gap:4px;flex-wrap:wrap}
+nav button,.role button{background:transparent;color:inherit;border:0;padding:8px 12px;border-radius:6px;font:500 14px inherit;cursor:pointer}
+nav button.on{background:rgba(255,255,255,.22);font-weight:700}
+.role{display:flex;border:1px solid rgba(255,255,255,.4);border-radius:8px;overflow:hidden}
+.role button.on{background:var(--priInk);color:var(--pri)}
+main{max-width:1080px;margin:auto;padding:20px 16px 60px}
+h1{font-size:clamp(28px,5vw,42px);line-height:1.1;letter-spacing:-1px;margin:6px 0 10px;font-weight:800}
+h2{font-size:21px;margin:0 0 12px;font-weight:700}h3{font-size:16px;margin:0 0 6px}
+p{margin:0 0 10px}.mut{color:var(--mut);font-size:14px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:18px;margin-bottom:16px}
+.grid{display:grid;gap:14px}.g2{grid-template-columns:repeat(auto-fit,minmax(260px,1fr))}.g4{grid-template-columns:repeat(auto-fit,minmax(150px,1fr))}
+label{display:block;font-weight:600;font-size:14px;margin:12px 0 4px}
+input,select,textarea{width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:8px;background:var(--bg);color:var(--ink);font:inherit}
+input:focus,select:focus,textarea:focus,button:focus-visible{outline:3px solid var(--acc);outline-offset:1px}
+textarea{min-height:100px;resize:vertical}
+.btn{background:var(--pri);color:var(--priInk);border:0;padding:11px 18px;border-radius:8px;font:700 15px inherit;cursor:pointer}
+.btn.alt{background:transparent;color:var(--pri);border:1.5px solid var(--pri)}
+.btn:disabled{opacity:.5;cursor:wait}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.stat{border-left:4px solid var(--pri);padding:6px 12px}.stat b{font-size:30px;display:block;line-height:1.1}
+.pill{display:inline-block;padding:2px 10px;border-radius:99px;font-size:12.5px;font-weight:700;border:1.5px solid currentColor}
+.p-Low{color:var(--ok)}.p-Medium{color:var(--warn)}.p-High{color:var(--bad)}.p-Critical{color:var(--crit);background:rgba(184,50,50,.12)}
+.s-Reported{color:var(--mut)}.s-In-Progress{color:var(--warn)}.s-Resolved{color:var(--ok)}
+.item{border:1px solid var(--line);border-radius:10px;padding:14px;margin-bottom:10px;background:var(--card)}
+.item .top{display:flex;gap:8px;justify-content:space-between;flex-wrap:wrap;align-items:flex-start}
+.tl{border-left:3px solid var(--line);margin:10px 0 0 6px;padding-left:16px}
+.tl div{position:relative;margin-bottom:10px;font-size:14px}.tl div:before{content:"";position:absolute;left:-23px;top:6px;width:10px;height:10px;border-radius:50%;background:var(--pri)}
+.ai{border:2px dashed var(--pri);border-radius:10px;padding:16px;margin-top:16px}
+.bar-r{display:flex;align-items:center;gap:8px;font-size:13px;margin:5px 0}.bar-r i{display:block;height:12px;background:var(--pri);border-radius:3px;min-width:3px}.bar-r span:first-child{width:110px;flex:none}
+.tbl{overflow-x:auto}table{border-collapse:collapse;width:100%;font-size:14px;min-width:760px}
+th,td{text-align:left;padding:9px 8px;border-bottom:1px solid var(--line);vertical-align:top}
+img.th{max-width:100%;max-height:180px;border-radius:8px;margin-top:8px}
+.hero{padding:22px 0 10px}.hero p{max-width:60ch;font-size:18px}
+.toast{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(20px + env(safe-area-inset-bottom,0px));background:var(--ink);color:var(--bg);padding:10px 18px;border-radius:8px;z-index:9;font-size:14px}
+@media (prefers-reduced-motion:no-preference){.ai{animation:pop .3s}}@keyframes pop{from{transform:scale(.98);opacity:.4}}
+</style>
+</head>
+<body>
+<header><div class="bar">
+<div class="logo">CivicResolve</div>
+<nav id="nav"></nav>
+<div class="role" role="group" aria-label="Role"><button data-r="citizen">Citizen</button><button data-r="admin">Official</button></div>
+</div></header>
+<main id="app"></main>
+<script>
+/* ---------- Master data: categories, departments, officials ---------- */
+const CATS={
+Littering:{dept:"Solid Waste Management",off:"Sanitary Inspector",base:1,kw:["litter","trash","garbage","waste","dump","plastic","bin","rubbish"]},
+Waterlogging:{dept:"Water Supply & Drainage Board",off:"Executive Engineer (Drainage)",base:3,kw:["waterlog","flood","stagnant","water logging","rain water","clogged drain","overflow","puddle"]},
+Potholes:{dept:"Public Works Department (Roads)",off:"Assistant Engineer (Roads)",base:3,kw:["pothole","road damage","crater","broken road","road cave","crack","uneven road"]},
+Encroachment:{dept:"Town Planning & Enforcement",off:"Town Planning Officer",base:2,kw:["encroach","illegal shop","footpath block","occupied","illegal construction","hawker","blocking the pavement"]},
+Traffic:{dept:"Traffic Police",off:"Traffic Inspector",base:2,kw:["traffic","jam","signal","parking","congestion","wrong side","honking","speeding"]},
+Pollution:{dept:"Pollution Control Board",off:"Environmental Engineer",base:3,kw:["pollution","smoke","burning","toxic","chemical","noise","dust","fumes","effluent","smell"]},
+Vandalism:{dept:"Civic Property Protection / Police",off:"Station House Officer",base:2,kw:["vandal","damaged","graffiti","broken","stolen","destroyed","defaced","streetlight","bench"]},
+Spitting:{dept:"Public Health Department",off:"Health Inspector",base:1,kw:["spit","spitting","paan","tobacco stain"]},
+Sanitation:{dept:"Sanitation & Public Health",off:"Sanitary Officer",base:2,kw:["sewage","toilet","latrine","sanitation","open defecation","drain smell","septic","unhygienic","mosquito"]},
+Corruption:{dept:"Vigilance & Anti-Corruption",off:"Vigilance Officer",base:3,kw:["bribe","corrupt","kickback","fraud","illegal payment","extort"]},
+Overcrowding:{dept:"Public Safety & Disaster Management",off:"Zonal Safety Officer",base:2,kw:["overcrowd","crowd","stampede","too many people","packed","over capacity"]},
+Mismanagement:{dept:"General Administration",off:"Municipal Commissioner",base:2,kw:["mismanage","negligence","delay","no response","ignored","irregular","poor service","not working"]}
+};
+const RISK=["accident","school","hospital","child","children","elderly","electric","live wire","sewage","flood","injury","injured","danger","fire","toxic","death","dead","main road","highway","bridge","disease","outbreak","stampede","days","week"];
+const LEVELS=["Low","Medium","High","Critical"];
+const STATUSES=["Reported","In Progress","Resolved"];
+const ALL="Municipal Commissioner (All Departments)";
+const DEPTS=[...new Set(Object.values(CATS).map(c=>c.dept))];
+const PASS={};DEPTS.forEach((d,i)=>PASS[d]="CR@"+(1001+i));PASS[ALL]="CR@9000";
+let session=null,editId=null,delId=null;
+
+/* ---------- AI layer: tries backend /api/classify (Gemini), else local engine ---------- */
+function localClassify(t,d,l,hasImg){
+ const x=(t+" "+d+" "+l).toLowerCase();let best="Mismanagement",bs=0;
+ for(const[c,o]of Object.entries(CATS)){let s=0;o.kw.forEach(k=>{if(x.includes(k))s+=k.length>5?2:1});if(s>bs){bs=s;best=c}}
+ const hits=RISK.filter(k=>x.includes(k));
+ let sc=CATS[best].base+Math.min(hits.length,4)*1.5+(hasImg?.5:0);
+ const pr=sc>=7?"Critical":sc>=5?"High":sc>=3?"Medium":"Low";
+ return{category:best,priority:pr,reason:hits.length?"Raised because of: "+hits.slice(0,4).join(", ")+". "+CATS[best].dept+" is the responsible body.":"No immediate safety signals found; rated on issue type and typical public impact.",
+ summary:t,confidence:bs?Math.min(.55+bs*.08,.95):.4,engine:"Built-in classifier (fallback)"};
+}
+async function analyse(f){
+ try{
+  const r=await fetch("/api/classify",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({title:f.title,description:f.description,location:f.location,image:f.image||null,categories:Object.keys(CATS)})});
+  if(!r.ok)throw 0;const j=await r.json();
+  if(CATS[j.category]&&LEVELS.includes(j.priority)){j.engine="Google Gemini";return j}throw 0;
+ }catch(e){await new Promise(r=>setTimeout(r,900));return localClassify(f.title,f.description,f.location,!!f.image)}
+}
+
+/* ---------- Storage ---------- */
+let DB=[];const KEY="civicresolve_v2";
+function ld(){try{const r=localStorage.getItem(KEY);if(r)return JSON.parse(r)}catch(e){}return null}
+function sv(){try{localStorage.setItem(KEY,JSON.stringify(DB))}catch(e){}}
+function mk(i,title,desc,loc,cat,pr,st,ago,name){const o=CATS[cat],t=Date.now()-ago*36e5;
+ const h=[{s:"Reported",t,note:"Complaint registered. Routed to "+o.dept+" ("+o.off+")."}];
+ if(st!=="Reported")h.push({s:"In Progress",t:t+3e6,note:"Team assigned by "+o.off+"."});
+ if(st==="Resolved")h.push({s:"Resolved",t:t+9e6,note:"Work completed and verified."});
+ return{id:"CR-"+(100200+i),title,description:desc,location:loc,category:cat,aiCategory:cat,priority:pr,reason:"Seed data.",dept:o.dept,official:o.off,status:st,name:name||"Resident",contact:"",history:h,created:t,votes:i*2,appeals:0}}
+function seed(){return[
+mk(1,"Deep pothole near bus stand","Large pothole on the main road, two bikers fell this week.","Anna Salai, Gobichettipalayam","Potholes","Critical","Reported",5),
+mk(2,"Garbage not cleared for 4 days","Overflowing bins near the market attract stray dogs.","Market Road","Littering","Medium","In Progress",50),
+mk(3,"Waterlogging outside school","Rain water stagnant at the school gate, children wading through.","Government School, Ward 7","Waterlogging","High","In Progress",30),
+mk(4,"Illegal shop on footpath","Shop extension blocks the pavement; pedestrians walk on the road.","Bus Stand Junction","Encroachment","Medium","Reported",20),
+mk(5,"Factory smoke at night","Thick smoke and chemical smell from an industrial unit after 10 pm.","Industrial Estate Road","Pollution","High","Resolved",120),
+mk(6,"Bribe demanded for water connection","Clerk asked for cash to process a new connection application.","Municipal Office","Corruption","High","Reported",10)]}
+DB=ld()||[];sv();
+
+/* ---------- Helpers ---------- */
+const $=s=>document.querySelector(s),esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const fmt=t=>new Date(t).toLocaleString(undefined,{dateStyle:"medium",timeStyle:"short"});
+const sc=s=>s.replace(" ","-");
+const pill=(c,v)=>`<span class="pill ${c}-${sc(v)}">${v}</span>`;
+function toast(m){const e=document.createElement("div");e.className="toast";e.textContent=m;document.body.appendChild(e);setTimeout(()=>e.remove(),2600)}
+let role="citizen",view="home",pending=null,tracked="";
+const NAV={citizen:[["home","Home"],["report","Report an issue"],["track","Track"],["public","Public dashboard"]],admin:[["admin","Admin dashboard"],["public","Public view"]]};
+function go(v){view=v;draw()}
+function draw(){
+ if(role==="admin"&&!NAV.admin.some(n=>n[0]===view))view="admin";
+ if(role==="citizen"&&!NAV.citizen.some(n=>n[0]===view))view="home";
+ $("#nav").innerHTML=NAV[role].map(n=>`<button class="${view===n[0]?"on":""}" data-v="${n[0]}">${n[1]}</button>`).join("");
+ document.querySelectorAll(".role button").forEach(b=>b.classList.toggle("on",b.dataset.r===role));
+ $("#app").innerHTML=({home,report,track,public:pub,admin:()=>session?admin():login()})[view]();
+ if(view==="report")bindForm();if(view==="track")bindTrack();if(view==="admin")session?bindAdmin():bindLogin();if($("#ef"))bindEdit();
+ window.scrollTo(0,0);
+}
+document.addEventListener("click",e=>{
+ const v=e.target.closest("[data-v]");if(v)go(v.dataset.v);
+ const r=e.target.closest("[data-r]");if(r){role=r.dataset.r;editId=null;if(role==="citizen")session=null;go(role==="admin"?"admin":"home")}
+ if(e.target.closest("#lo")){session=null;editId=null;go("admin")}
+ const ed=e.target.closest("[data-ed]");if(ed){editId=ed.dataset.ed;draw()}
+ if(e.target.closest("#xe")){editId=null;draw()}
+ const dl=e.target.closest("[data-del]");if(dl){if(delId===dl.dataset.del){DB=DB.filter(x=>x.id!==delId);delId=null;sv();toast("Complaint deleted")}else delId=dl.dataset.del;draw()}
+ const t=e.target.closest("[data-track]");if(t){tracked=t.dataset.track;go("track")}
+ const u=e.target.closest("[data-vote]");if(u){const c=DB.find(x=>x.id===u.dataset.vote);c.votes++;sv();draw()}
+});
+const counts=(L=DB)=>({all:L.length,r:L.filter(c=>c.status==="Reported").length,p:L.filter(c=>c.status==="In Progress").length,d:L.filter(c=>c.status==="Resolved").length});
+const stats=(L=DB)=>{const k=counts(L);return`<div class="grid g4"><div class="stat"><b>${k.all}</b>Total reports</div><div class="stat"><b>${k.r}</b>Reported</div><div class="stat"><b>${k.p}</b>In progress</div><div class="stat"><b>${k.d}</b>Resolved</div></div>`};
+
+/* ---------- Views ---------- */
+function home(){return`<section class="hero"><h1>Report it once. We route it to the right officer.</h1>
+<p>Describe a civic problem in your own words. CivicResolve works out the category, how urgent it is and which department and official must act, then lets you follow it until it is resolved.</p>
+<div class="row"><button class="btn" data-v="report">Report an issue</button><button class="btn alt" data-v="track">Track a complaint</button></div></section>
+<div class="card" style="margin-top:22px">${stats()}</div>
+<div class="card"><h2>Issues we handle and who receives them</h2><div class="grid g2">${Object.entries(CATS).map(([c,o])=>`<div><h3>${c}</h3><div class="mut">${o.dept}<br>Officer: ${o.off}</div></div>`).join("")}</div></div>`}
+
+function report(){return`<h1 style="font-size:30px">Report a civic issue</h1>
+<form id="f" class="card" autocomplete="off">
+<div class="grid g2"><div><label for="name">Your name</label><input id="name" required></div>
+<div><label for="contact">Phone or email (for updates)</label><input id="contact" required></div></div>
+<label for="title">Title</label><input id="title" required maxlength="90" placeholder="e.g. Open drain overflowing near school">
+<label for="desc">Description</label><textarea id="desc" required placeholder="What is happening, since when, who is affected?"></textarea>
+<label for="loc">Location</label><div class="row"><input id="loc" required style="flex:1;min-width:200px" placeholder="Street, landmark, ward"><button type="button" class="btn alt" id="geo">Use my location</button></div>
+<div class="grid g2"><div><label for="cat">Category</label><select id="cat"><option value="">Let AI decide</option>${Object.keys(CATS).map(c=>`<option>${c}</option>`).join("")}</select></div>
+<div><label for="img">Photo (optional)</label><input id="img" type="file" accept="image/*"></div></div>
+<div id="prev"></div>
+<div class="row" style="margin-top:16px"><button class="btn" id="go">Analyse my complaint</button></div></form><div id="out"></div>`}
+
+function bindForm(){
+ let img=null;
+ $("#geo").onclick=()=>{if(!navigator.geolocation)return toast("Location not available on this device");
+  navigator.geolocation.getCurrentPosition(p=>{$("#loc").value=`GPS ${p.coords.latitude.toFixed(5)}, ${p.coords.longitude.toFixed(5)}`},()=>toast("Allow location access or type the address"))};
+ $("#img").onchange=e=>{const f=e.target.files[0];if(!f)return img=null;
+  const r=new FileReader();r.onload=()=>{const i=new Image();i.onload=()=>{const k=Math.min(1,640/i.width),c=document.createElement("canvas");c.width=i.width*k;c.height=i.height*k;c.getContext("2d").drawImage(i,0,0,c.width,c.height);img=c.toDataURL("image/jpeg",.7);$("#prev").innerHTML=`<img class="th" src="${img}" alt="Preview">`};i.src=r.result};r.readAsDataURL(f)};
+ $("#f").onsubmit=async e=>{e.preventDefault();const b=$("#go");b.disabled=true;b.textContent="Analysing your complaint…";
+  const f={name:$("#name").value,contact:$("#contact").value,title:$("#title").value,description:$("#desc").value,location:$("#loc").value,userCat:$("#cat").value,image:img};
+  const a=await analyse(f);pending={f,a};b.disabled=false;b.textContent="Analyse again";showResult()};
+}
+function showResult(){const{f,a}=pending;const cat=f.userCat||a.category,o=CATS[cat];
+ $("#out").innerHTML=`<div class="ai"><h2>Review before sending</h2>
+<p class="mut">Analysed by: ${esc(a.engine)}. Confidence ${(a.confidence*100).toFixed(0)}%.</p>
+<label for="fc">Category (change it if the AI got it wrong)</label><select id="fc">${Object.keys(CATS).map(c=>`<option ${c===cat?"selected":""}>${c}</option>`).join("")}</select>
+<p style="margin-top:12px"><b>Priority:</b> ${pill("p",a.priority)}</p>
+<p><b>Why:</b> ${esc(a.reason)}</p>
+<p id="dd"><b>Department:</b> ${o.dept}<br><b>Officer who will be notified:</b> ${o.off}</p>
+<button class="btn" id="send">Send to department</button></div>`;
+ $("#fc").onchange=e=>{const q=CATS[e.target.value];$("#dd").innerHTML=`<b>Department:</b> ${q.dept}<br><b>Officer who will be notified:</b> ${q.off}`};
+ $("#send").onclick=submit;$("#out").scrollIntoView({behavior:"smooth"})}
+function submit(){const{f,a}=pending,cat=$("#fc").value,o=CATS[cat],now=Date.now();
+ const c={id:"CR-"+Math.floor(100000+Math.random()*899999),title:f.title,description:f.description,location:f.location,category:cat,aiCategory:a.category,priority:a.priority,reason:a.reason,dept:o.dept,official:o.off,status:"Reported",name:f.name,contact:f.contact,image:f.image,history:[{s:"Reported",t:now,note:`Complaint registered. Alert sent to ${o.off}, ${o.dept}. Confirmation sent to ${f.contact}.`}],created:now,votes:0,appeals:0};
+ DB.unshift(c);sv();pending=null;
+ $("#app").innerHTML=`<div class="card"><h1 style="font-size:28px">Complaint sent</h1><p>Your tracking ID is <b style="font-size:22px">${c.id}</b>. Save it to follow progress.</p>
+<p>${pill("p",c.priority)} ${c.category}. Assigned to <b>${o.off}</b>, ${o.dept}.</p><div class="row"><button class="btn" data-track="${c.id}">Track this complaint</button><button class="btn alt" data-v="report">Report another</button></div></div>`}
+
+function timeline(c){return`<div class="tl">${c.history.map(h=>`<div><b>${h.s}</b> <span class="mut">${fmt(h.t)}</span><br>${esc(h.note)}</div>`).join("")}</div>`}
+function track(){const c=DB.find(x=>x.id.toLowerCase()===tracked.trim().toLowerCase());
+ return`<h1 style="font-size:30px">Track a complaint</h1><div class="card"><div class="row"><input id="tid" style="flex:1;min-width:200px" placeholder="Enter tracking ID, e.g. CR-100201" value="${esc(tracked)}"><button class="btn" id="tb">Track</button></div></div>
+${tracked&&!c?`<div class="card">No complaint found with that ID. Check the ID in your confirmation and try again.</div>`:""}
+${c&&editId===c.id?editCard(c,"citizen"):""}${c&&editId!==c.id?`<div class="card"><div class="top row" style="justify-content:space-between"><h2>${esc(c.title)}</h2><div>${pill("s",c.status)} ${pill("p",c.priority)}</div></div>
+<p>${esc(c.description)}</p><p class="mut">${esc(c.location)} · ${c.category} · ${c.id}</p>${c.image?`<img class="th" src="${c.image}" alt="Complaint photo">`:""}
+<p style="margin-top:10px"><b>Handled by:</b> ${esc(c.official)}, ${esc(c.dept)}</p>${timeline(c)}
+${c.status!=="Resolved"?`<div class="row"><button class="btn alt" id="ap">Appeal: escalate to Municipal Commissioner</button><button class="btn alt" data-ed="${c.id}">Edit my complaint</button></div>`:""}</div>`:""}
+<h2>Recent complaints</h2>${DB.length?"":"<p class=\"mut\">No complaints have been reported yet.</p>"}${DB.slice(0,5).map(x=>`<div class="item"><div class="top"><b>${esc(x.title)}</b>${pill("s",x.status)}</div><div class="mut">${x.id}</div><button class="btn alt" style="margin-top:8px;padding:6px 12px" data-track="${x.id}">View</button></div>`).join("")}`}
+function bindTrack(){const run=()=>{tracked=$("#tid").value;draw()};$("#tb").onclick=run;$("#tid").onkeydown=e=>{if(e.key==="Enter")run()};
+ const a=$("#ap");if(a)a.onclick=()=>{const c=DB.find(x=>x.id.toLowerCase()===tracked.trim().toLowerCase());c.appeals++;
+  const i=LEVELS.indexOf(c.priority);if(i<3)c.priority=LEVELS[i+1];
+  c.history.push({s:c.status,t:Date.now(),note:`Citizen appeal filed. Escalated to Municipal Commissioner; priority raised to ${c.priority}.`});sv();toast("Appeal sent to the Municipal Commissioner");draw()}}
+
+let pf={cat:"",st:""};
+function pub(){const l=DB.filter(c=>(!pf.cat||c.category===pf.cat)&&(!pf.st||c.status===pf.st));
+ const mx=Math.max(1,...Object.keys(CATS).map(k=>DB.filter(c=>c.category===k).length));
+ return`<h1 style="font-size:30px">Public dashboard</h1><div class="card">${stats()}</div>
+<div class="grid g2"><div class="card"><h2>Issues by category</h2>${Object.keys(CATS).map(k=>{const n=DB.filter(c=>c.category===k).length;return`<div class="bar-r"><span>${k}</span><i style="width:${n/mx*60}%"></i><span>${n}</span></div>`}).join("")}</div>
+<div class="card"><h2>Filter</h2><label for="pc">Category</label><select id="pc" onchange="pf.cat=this.value;draw()"><option value="">All</option>${Object.keys(CATS).map(c=>`<option ${pf.cat===c?"selected":""}>${c}</option>`).join("")}</select>
+<label for="ps">Status</label><select id="ps" onchange="pf.st=this.value;draw()"><option value="">All</option>${STATUSES.map(c=>`<option ${pf.st===c?"selected":""}>${c}</option>`).join("")}</select></div></div>
+${l.length?l.map(c=>`<div class="item"><div class="top"><b>${esc(c.title)}</b><div>${pill("s",c.status)} ${pill("p",c.priority)}</div></div>
+<div class="mut">${esc(c.location)} · ${c.category} · ${esc(c.dept)}</div>
+<div class="row" style="margin-top:8px"><button class="btn alt" style="padding:6px 12px" data-vote="${c.id}">Same problem here (${c.votes})</button><button class="btn alt" style="padding:6px 12px" data-track="${c.id}">Timeline</button></div></div>`).join(""):`<div class="card">No complaints match these filters. Clear a filter to see more.</div>`}`}
+
+let af={st:"",pr:"",dp:""};
+function admin(){const base=session===ALL?DB:DB.filter(c=>c.dept===session);
+ const l=base.filter(c=>(!af.st||c.status===af.st)&&(!af.pr||c.priority===af.pr)&&(!af.dp||c.dept===af.dp)).sort((a,b)=>LEVELS.indexOf(b.priority)-LEVELS.indexOf(a.priority)||b.created-a.created);
+ return`<h1 style="font-size:30px">${esc(session)}</h1><div class="row" style="margin-bottom:14px"><span class="mut">Signed in as an official of this department. You only see complaints routed to it.</span><button class="btn alt" id="lo" style="padding:6px 12px">Sign out</button></div><div class="card">${stats(base)}</div>${(()=>{const c=DB.find(x=>x.id===editId);return c?editCard(c,"admin"):""})()}
+<div class="card"><div class="row"><select id="fs" style="width:auto"><option value="">All statuses</option>${STATUSES.map(s=>`<option ${af.st===s?"selected":""}>${s}</option>`).join("")}</select>
+<select id="fp" style="width:auto"><option value="">All priorities</option>${LEVELS.map(s=>`<option ${af.pr===s?"selected":""}>${s}</option>`).join("")}</select>
+${session===ALL?`<select id="fd" style="width:auto"><option value="">All departments</option>${DEPTS.map(s=>`<option ${af.dp===s?"selected":""}>${s}</option>`).join("")}</select>`:""}</div>
+<p class="mut" style="margin-top:8px">Sorted by priority, most urgent first. Each status change is logged and the citizen is notified.</p></div>
+<div class="card tbl"><table><thead><tr><th>Complaint</th><th>Priority</th><th>Department and officer</th><th>Status</th><th>Note to citizen</th><th></th></tr></thead><tbody>
+${l.map(c=>`<tr><td><b>${esc(c.title)}</b><br><span class="mut">${c.id} · ${esc(c.location)}<br>${esc(c.name)} ${c.contact?"· "+esc(c.contact):""}${c.appeals?`<br><b style="color:var(--bad)">${c.appeals} appeal(s)</b>`:""}</span></td>
+<td>${pill("p",c.priority)}<br><span class="mut">${c.category}</span></td><td>${esc(c.dept)}<br><span class="mut">${esc(c.official)}</span></td>
+<td><select data-st="${c.id}">${STATUSES.map(s=>`<option ${c.status===s?"selected":""}>${s}</option>`).join("")}</select></td>
+<td><input data-nt="${c.id}" placeholder="Optional update"></td><td><div class="row"><button class="btn" style="padding:7px 12px" data-save="${c.id}">Save</button><button class="btn alt" style="padding:7px 12px" data-ed="${c.id}">Edit</button><button class="btn alt" style="padding:7px 12px;color:var(--bad);border-color:var(--bad)" data-del="${c.id}">${delId===c.id?"Confirm delete":"Delete"}</button></div></td></tr>`).join("")||`<tr><td colspan="6">No complaints match. Clear a filter.</td></tr>`}
+</tbody></table></div>`}
+function bindAdmin(){
+ [["fs","st"],["fp","pr"],["fd","dp"]].forEach(([i,k])=>{const el=$("#"+i);if(el)el.onchange=e=>{af[k]=e.target.value;draw()}});
+ document.querySelectorAll("[data-save]").forEach(b=>b.onclick=()=>{const id=b.dataset.save,c=DB.find(x=>x.id===id),s=document.querySelector(`[data-st="${id}"]`).value,n=document.querySelector(`[data-nt="${id}"]`).value;
+  if(s===c.status&&!n)return toast("Change the status or add a note first");
+  c.status=s;c.history.push({s,t:Date.now(),note:(n||"Status updated by "+c.official+".")+(c.contact?` Notification sent to ${c.contact}.`:"")});sv();toast("Updated "+id);draw()});
+}
+function login(){return`<h1 style="font-size:30px">Official sign in</h1>
+<form id="lf" class="card" style="max-width:460px"><label for="ld">Department</label><select id="ld"><option value="">Select your department</option>${[ALL,...DEPTS].map(d=>`<option>${d}</option>`).join("")}</select>
+<label for="lp">Department passcode</label><input id="lp" type="password" autocomplete="off">
+<p id="le" role="alert" style="color:var(--bad);font-size:14px;min-height:20px;margin-top:8px"></p><button class="btn">Sign in</button></form>
+<details class="card" style="max-width:460px"><summary>Demo passcodes (prototype only)</summary><div class="mut" style="margin-top:8px">${[ALL,...DEPTS].map(d=>`${d}: <b>${PASS[d]}</b>`).join("<br>")}</div></details>`}
+function editCard(c,by){const adm=by==="admin";return`<form id="ef" class="card" data-id="${c.id}" data-by="${by}"><h2>Edit complaint ${c.id}</h2>
+<label for="et">Title</label><input id="et" required value="${esc(c.title)}">
+<label for="ed2">Description</label><textarea id="ed2" required>${esc(c.description)}</textarea>
+<label for="el">Location</label><input id="el" required value="${esc(c.location)}">
+<label for="ec">Category</label><select id="ec">${Object.keys(CATS).map(k=>`<option ${k===c.category?"selected":""}>${k}</option>`).join("")}</select>
+${adm?`<div class="grid g2"><div><label for="ep">Priority</label><select id="ep">${LEVELS.map(k=>`<option ${k===c.priority?"selected":""}>${k}</option>`).join("")}</select></div><div><label for="edp">Department</label><select id="edp">${DEPTS.map(k=>`<option ${k===c.dept?"selected":""}>${k}</option>`).join("")}</select></div></div><label for="eo">Officer in charge</label><input id="eo" value="${esc(c.official)}">`:`<label for="ev">Verify: phone or email used when reporting</label><input id="ev" required autocomplete="off">`}
+<p id="ee" role="alert" style="color:var(--bad);font-size:14px;min-height:20px"></p>
+<div class="row"><button class="btn">Save changes</button><button type="button" class="btn alt" id="xe">Cancel</button></div></form>`}
+function bindEdit(){const f=$("#ef");f.onsubmit=e=>{e.preventDefault();const c=DB.find(x=>x.id===f.dataset.id),adm=f.dataset.by==="admin";
+ if(!adm&&$("#ev").value.trim().toLowerCase()!==String(c.contact).trim().toLowerCase()){$("#ee").textContent="That does not match the phone or email used for this complaint.";return}
+ c.title=$("#et").value;c.description=$("#ed2").value;c.location=$("#el").value;const nc=$("#ec").value;let note;
+ if(adm){c.category=nc;c.priority=$("#ep").value;c.dept=$("#edp").value;c.official=$("#eo").value||c.official;note=`Details updated by ${session}.`}
+ else{note="Details edited by the citizen.";if(nc!==c.category){c.category=nc;c.dept=CATS[nc].dept;c.official=CATS[nc].off;note+=` Re-routed to ${c.official}, ${c.dept}.`}}
+ c.history.push({s:c.status,t:Date.now(),note});editId=null;sv();toast("Changes saved");draw()}}
+function bindLogin(){$("#lf").onsubmit=e=>{e.preventDefault();const d=$("#ld").value,p=$("#lp").value.trim();
+ if(!d){$("#le").textContent="Select your department first.";return}
+ if(PASS[d]!==p){$("#le").textContent="Incorrect passcode for this department. Check it and try again.";return}
+ session=d;af={st:"",pr:"",dp:""};draw()}}
+draw();
+</script>
+</body>
+</html>
